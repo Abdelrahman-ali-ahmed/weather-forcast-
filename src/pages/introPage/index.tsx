@@ -31,15 +31,20 @@ export default function Main() {
             <MainItem weather={weather} currentWeather={data} nightMode={nightMode} />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-4xl">
-              {weather.daily.temperature_2m_max.slice(1).map((temp, index) => (
-                <Items
-                  nightMode={nightMode}
-                  key={index}
-                  temperature={temp}
-                  day={weather?.daily?.time[index + 1]}
-                  weather={data[index + 1]?.des || "No data"}
-                />
-              ))}
+            {weather.daily.temperature_2m_max.slice(1).map((temp, index) => {
+  const weatherInfo = data[index + 1];
+  const weatherDescription = typeof weatherInfo === "string" ? weatherInfo : weatherInfo?.des;
+
+  return (
+    <Items
+      nightMode={nightMode}
+      key={index}
+      temperature={temp}
+      day={weather?.daily?.time[index + 1]}
+      weather={weatherDescription || "No data"}
+    />
+  );
+})}
             </div>
           </div>
         )}

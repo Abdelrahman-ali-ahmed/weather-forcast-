@@ -10,7 +10,8 @@ interface WeatherResponse {
   daily: {
     temperature_2m_max: number[];
     temperature_2m_min: number[];
-    weathercode:number;
+    weathercode:number[];
+    time:string[];
   };
   timezone: string;
 }

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getWeather } from "../redux/weatherSlice";
 import axios from "axios";
 import { AppDispatch, RootState } from "../../../lib/store";
-
+type WeatherDescription = string | { des: string; image: string };
 const useWeather = () => {
   const [city, setCity] = useState("");
   const [coords, setCoords] = useState({ latitude: 30.0444, longitude: 31.2357 }); // Default to Cairo
@@ -41,40 +41,52 @@ const useWeather = () => {
   const getWeatherSummary = () => {
     if (!weather || !weather.daily) return ["No data available"];
     const { weathercode } = weather.daily;
-    type WeatherDescription = string | { des: string; image: string };
+    console.log("weather code", weathercode);
+  
     const weatherMap: Record<number, WeatherDescription> = {
-      0: {des:"Clear sky ☀️",image:"/assets/day-mode.png"},
-      1: {des:"Mainly clear 🌤️",image:"/assets/sunny.png"},
-      2: {des:"Partly cloudy ⛅",image:"/assets/cloudy.png"},
-      3: {des:"Overcast ☁️",image:"/assets/cloud.png"},
-      45: {des:"Foggy 🌫️",image:"/assets/wind.png"},
-      48: {des:"Dense fog 🌫️",image:"/assets/wind.png"},
-      51: {des:"Light drizzle 🌦️",image:"/assets/cloudy (1).png"},
-      53:{ des:"Moderate drizzle 🌧️",image:"/assets/heavy-rain.png"},
-      55: {des:"Heavy drizzle 🌧️",image:"/assets/heavy-rain.png"},
-      56: {des:"Light freezing drizzle ❄️",image:"/assets/snowflake.png"},
-      57: {des:"Dense freezing drizzle ❄️",image:"/assets/snowflake.png"},
-      61: {des:"Light rain 🌦️",image:"/assets/cloudy (1).png"},
-      63: {des:"Moderate rain 🌧️",image:"/assets/heavy-rain.png"},
-      65: {des:"Heavy rain 🌧️",image:"/assets/heavy-rain.png"},
-      66: {des:"Light freezing rain ❄️",image:"/assets/snowflake.png"},
-      67: {des:"Heavy freezing rain ❄️",image:"/assets/snowflake.png"},
-      71: {des:"Light snowfall ❄️",image:"/assets/snowflake.png"},
-      73: {des:"Moderate snowfall ❄️",image:"/assets/snowflake.png"},
-      75: {des:"Heavy snowfall ❄️",image:"/assets/snowflake.png"},
-      77: {des:"Snow grains ❄️",image:"/assets/snowflake.png"},
-      80: {des:"Slight rain showers 🌦️",image:"/assets/cloudy (1).png"},
-      81: {des:"Moderate rain showers 🌧️",image:"/assets/heavy-rain.png/"},
-      82: {des:"Violent rain showers 🌧️⛈️",image:"/assets/stom.png"},
-      85: {des:"Slight snow showers ❄️",image:"/assets/snowflake.png"},
-      86: {des:"Heavy snow showers ❄️",image:"/assets/snowflake.png"},
-      95: {des:"Thunderstorm ⛈️",image:"/assets/stom.png"},
-      96: {des:"Thunderstorm with light hail ⛈️❄️",image:"/assets/snowy.png"},
-      99: {des:"Thunderstorm with heavy hail ⛈️❄️",image:"/assets/snowy.png"}
+      0: { des: "Clear sky ☀️", image: "/assets/day-mode.png" },
+      1: { des: "Mainly clear 🌤️", image: "/assets/sunny.png" },
+      2: { des: "Partly cloudy ⛅", image: "/assets/cloudy.png" },
+      3: { des: "Overcast ☁️", image: "/assets/cloud.png" },
+      45: { des: "Foggy 🌫️", image: "/assets/wind.png" },
+      48: { des: "Dense fog 🌫️", image: "/assets/wind.png" },
+      51: { des: "Light drizzle 🌦️", image: "/assets/cloudy (1).png" },
+      53: { des: "Moderate drizzle 🌧️", image: "/assets/heavy-rain.png" },
+      55: { des: "Heavy drizzle 🌧️", image: "/assets/heavy-rain.png" },
+      56: { des: "Light freezing drizzle ❄️", image: "/assets/snowflake.png" },
+      57: { des: "Dense freezing drizzle ❄️", image: "/assets/snowflake.png" },
+      61: { des: "Light rain 🌦️", image: "/assets/cloudy (1).png" },
+      63: { des: "Moderate rain 🌧️", image: "/assets/heavy-rain.png" },
+      65: { des: "Heavy rain 🌧️", image: "/assets/heavy-rain.png" },
+      66: { des: "Light freezing rain ❄️", image: "/assets/snowflake.png" },
+      67: { des: "Heavy freezing rain ❄️", image: "/assets/snowflake.png" },
+      71: { des: "Light snowfall ❄️", image: "/assets/snowflake.png" },
+      73: { des: "Moderate snowfall ❄️", image: "/assets/snowflake.png" },
+      75: { des: "Heavy snowfall ❄️", image: "/assets/snowflake.png" },
+      77: { des: "Snow grains ❄️", image: "/assets/snowflake.png" },
+      80: { des: "Slight rain showers 🌦️", image: "/assets/cloudy (1).png" },
+      81: { des: "Moderate rain showers 🌧️", image: "/assets/heavy-rain.png" },
+      82: { des: "Violent rain showers 🌧️⛈️", image: "/assets/stom.png" },
+      85: { des: "Slight snow showers ❄️", image: "/assets/snowflake.png" },
+      86: { des: "Heavy snow showers ❄️", image: "/assets/snowflake.png" },
+      95: { des: "Thunderstorm ⛈️", image: "/assets/stom.png" },
+      96: { des: "Thunderstorm with light hail ⛈️❄️", image: "/assets/snowy.png" },
+      99: { des: "Thunderstorm with heavy hail ⛈️❄️", image: "/assets/snowy.png" }
     };
   
-    return weathercode.map((code:number, i:number) => {return {des:`Day ${i + 1}: ${weatherMap[code]?.des || "Unknown Weather 🌍"}`,image:weatherMap[code]?.image}});
+    return weathercode.map((code: number, i: number) => {
+      const weatherData = weatherMap[code];
+  
+      if (typeof weatherData === "string") {
+        return { des: `Day ${i + 1}: ${weatherData}`, image: "" };
+      } else if (weatherData) {
+        return { des: `Day ${i + 1}: ${weatherData.des}`, image: weatherData.image };
+      } else {
+        return { des: `Day ${i + 1}: Unknown Weather 🌍`, image: "" };
+      }
+    });
   };
+  
   return { city, setCity, fetchCityCoordinates, weather, status, error, getWeatherSummary,nightMode };
 };
 
