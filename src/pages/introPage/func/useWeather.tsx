@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getWeather } from "../redux/weatherSlice";
+import { getWeather, setLoading } from "../redux/weatherSlice";
 import axios from "axios";
 import { AppDispatch, RootState } from "../../../lib/store";
 type WeatherDescription = string | { des: string; image: string };
@@ -20,6 +20,7 @@ const useWeather = () => {
 
   const fetchCityCoordinates = async () => {
     try {
+      dispatch(setLoading())
       const response = await axios.get(
         `https://nominatim.openstreetmap.org/search?city=${city}&format=json`
       );
@@ -85,7 +86,7 @@ const useWeather = () => {
         return { des: `Day ${i + 1}: Unknown Weather 🌍`, image: "" };
       }
     });
-  };
+  };  
   
   return { city, setCity, fetchCityCoordinates, weather, status, error, getWeatherSummary,nightMode };
 };

@@ -51,7 +51,8 @@ const weatherSlice = createSlice({
   initialState,
   reducers: {  toggleNightMode: (state) => {
     state.nightMode = !state.nightMode;
-  },},
+  },
+setLoading:(state)=>{state.status="loading"}},
   extraReducers: (builder) => {
     builder
       .addCase(getWeather.pending, (state) => {
@@ -67,6 +68,6 @@ const weatherSlice = createSlice({
       });
   },
 });
-export const { toggleNightMode } = weatherSlice.actions;
+export const { toggleNightMode,setLoading } = weatherSlice.actions;
 
 export default weatherSlice.reducer;
