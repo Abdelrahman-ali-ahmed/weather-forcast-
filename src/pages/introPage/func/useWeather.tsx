@@ -73,7 +73,7 @@ const useWeather = () => {
       99: {des:"Thunderstorm with heavy hail ⛈️❄️",image:"/assets/snowy.png"}
     };
   
-    return weathercode.map((code, i) => {return {des:`Day ${i + 1}: ${weatherMap[code]?.des || "Unknown Weather 🌍"}`,image:weatherMap[code]?.image}});
+    return weathercode.map((code:number, i:number) => {return {des:`Day ${i + 1}: ${weatherMap[code]?.des || "Unknown Weather 🌍"}`,image:weatherMap[code]?.image}});
   };
   return { city, setCity, fetchCityCoordinates, weather, status, error, getWeatherSummary,nightMode };
 };
